@@ -67,3 +67,7 @@
 - [ ] Provide instructions for custom domain configuration
 - [ ] Document admin panel usage
 - [ ] Create product upload guide
+
+
+## Bug Fixes
+- [x] Fix nested anchor tags error (Link wrapping <a> elements)

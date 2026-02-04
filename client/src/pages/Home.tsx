@@ -16,62 +16,44 @@ export default function Home() {
       <nav className="bg-background/80 backdrop-blur-sm border-b sticky top-0 z-50">
         <div className="container">
           <div className="flex items-center justify-between h-16">
-            <Link href="/">
-              <a className="flex items-center gap-3">
-                <img src="/logo.png" alt="LNL Automations" className="h-10 w-auto" />
-                <span className="font-bold text-xl">LNL Automations</span>
-              </a>
+            <Link href="/" className="flex items-center gap-3">
+              <img src="/logo.png" alt="LNL Automations" className="h-10 w-auto" />
+              <span className="font-bold text-xl">LNL Automations</span>
             </Link>
             
             <div className="flex items-center gap-4">
-              <Link href="/products">
-                <a className="text-sm font-medium hover:text-primary transition-colors">Products</a>
-              </Link>
-              <Link href="/about">
-                <a className="text-sm font-medium hover:text-primary transition-colors">About</a>
-              </Link>
-              <Link href="/contact">
-                <a className="text-sm font-medium hover:text-primary transition-colors">Contact</a>
-              </Link>
-              <Link href="/faq">
-                <a className="text-sm font-medium hover:text-primary transition-colors">FAQ</a>
-              </Link>
+              <Link href="/products" className="text-sm font-medium hover:text-primary transition-colors">Products</Link>
+              <Link href="/about" className="text-sm font-medium hover:text-primary transition-colors">About</Link>
+              <Link href="/contact" className="text-sm font-medium hover:text-primary transition-colors">Contact</Link>
+              <Link href="/faq" className="text-sm font-medium hover:text-primary transition-colors">FAQ</Link>
               
               {isAuthenticated ? (
                 <>
                   <Link href="/orders">
-                    <a>
-                      <Button variant="ghost" size="sm">
-                        <Package className="h-4 w-4 mr-2" />
-                        My Orders
-                      </Button>
-                    </a>
+                    <Button variant="ghost" size="sm">
+                      <Package className="h-4 w-4 mr-2" />
+                      My Orders
+                    </Button>
                   </Link>
                   {user?.role === "admin" && (
                     <Link href="/admin">
-                      <a>
-                        <Button variant="outline" size="sm">Admin Panel</Button>
-                      </a>
+                      <Button variant="outline" size="sm">Admin Panel</Button>
                     </Link>
                   )}
                   <Link href="/cart">
-                    <a>
-                      <Button size="sm">
-                        <ShoppingCart className="h-4 w-4 mr-2" />
-                        Cart
-                      </Button>
-                    </a>
+                    <Button size="sm">
+                      <ShoppingCart className="h-4 w-4 mr-2" />
+                      Cart
+                    </Button>
                   </Link>
                 </>
               ) : (
                 <>
                   <Link href="/cart">
-                    <a>
-                      <Button variant="ghost" size="sm">
-                        <ShoppingCart className="h-4 w-4 mr-2" />
-                        Cart
-                      </Button>
-                    </a>
+                    <Button variant="ghost" size="sm">
+                      <ShoppingCart className="h-4 w-4 mr-2" />
+                      Cart
+                    </Button>
                   </Link>
                   <a href={getLoginUrl()}>
                     <Button size="sm">
@@ -105,18 +87,14 @@ export default function Home() {
             </p>
             <div className="flex gap-4 justify-center">
               <Link href="/products">
-                <a>
-                  <Button size="lg" variant="secondary" className="bg-white text-primary hover:bg-white/90">
-                    Browse Products
-                  </Button>
-                </a>
+                <Button size="lg" variant="secondary" className="bg-white text-primary hover:bg-white/90">
+                  Browse Products
+                </Button>
               </Link>
               <Link href="/about">
-                <a>
-                  <Button size="lg" variant="outline" className="border-white text-white hover:bg-white/10">
-                    Learn More
-                  </Button>
-                </a>
+                <Button size="lg" variant="outline" className="border-white text-white hover:bg-white/10">
+                  Learn More
+                </Button>
               </Link>
             </div>
           </div>
@@ -172,9 +150,7 @@ export default function Home() {
                       ${(product.price / 100).toFixed(2)}
                     </span>
                     <Link href={`/products/${product.id}`}>
-                      <a>
-                        <Button>View Details</Button>
-                      </a>
+                      <Button>View Details</Button>
                     </Link>
                   </CardFooter>
                 </Card>
@@ -190,9 +166,7 @@ export default function Home() {
           {products && products.length > 6 && (
             <div className="text-center mt-12">
               <Link href="/products">
-                <a>
-                  <Button size="lg" variant="outline">View All Products</Button>
-                </a>
+                <Button size="lg" variant="outline">View All Products</Button>
               </Link>
             </div>
           )}
@@ -247,25 +221,25 @@ export default function Home() {
             <div>
               <h4 className="font-semibold mb-4">Products</h4>
               <ul className="space-y-2 text-sm text-muted-foreground">
-                <li><Link href="/products"><a className="hover:text-foreground transition-colors">All Products</a></Link></li>
-                <li><Link href="/products?type=digital"><a className="hover:text-foreground transition-colors">Digital Downloads</a></Link></li>
-                <li><Link href="/products?type=physical"><a className="hover:text-foreground transition-colors">Physical Products</a></Link></li>
+                <li><Link href="/products" className="hover:text-foreground transition-colors">All Products</Link></li>
+                <li><Link href="/products?type=digital" className="hover:text-foreground transition-colors">Digital Downloads</Link></li>
+                <li><Link href="/products?type=physical" className="hover:text-foreground transition-colors">Physical Products</Link></li>
               </ul>
             </div>
             <div>
               <h4 className="font-semibold mb-4">Support</h4>
               <ul className="space-y-2 text-sm text-muted-foreground">
-                <li><Link href="/faq"><a className="hover:text-foreground transition-colors">FAQ</a></Link></li>
-                <li><Link href="/contact"><a className="hover:text-foreground transition-colors">Contact Us</a></Link></li>
-                <li><Link href="/refund-policy"><a className="hover:text-foreground transition-colors">Refund Policy</a></Link></li>
+                <li><Link href="/faq" className="hover:text-foreground transition-colors">FAQ</Link></li>
+                <li><Link href="/contact" className="hover:text-foreground transition-colors">Contact Us</Link></li>
+                <li><Link href="/refund-policy" className="hover:text-foreground transition-colors">Refund Policy</Link></li>
               </ul>
             </div>
             <div>
               <h4 className="font-semibold mb-4">Company</h4>
               <ul className="space-y-2 text-sm text-muted-foreground">
-                <li><Link href="/about"><a className="hover:text-foreground transition-colors">About Us</a></Link></li>
+                <li><Link href="/about" className="hover:text-foreground transition-colors">About Us</Link></li>
                 {isAuthenticated && user?.role === "admin" && (
-                  <li><Link href="/admin"><a className="hover:text-foreground transition-colors">Admin Panel</a></Link></li>
+                  <li><Link href="/admin" className="hover:text-foreground transition-colors">Admin Panel</Link></li>
                 )}
               </ul>
             </div>
