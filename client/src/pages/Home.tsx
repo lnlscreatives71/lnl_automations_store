@@ -1,31 +1,280 @@
 import { useAuth } from "@/_core/hooks/useAuth";
 import { Button } from "@/components/ui/button";
-import { Loader2 } from "lucide-react";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { getLoginUrl } from "@/const";
-import { Streamdown } from 'streamdown';
+import { trpc } from "@/lib/trpc";
+import { ShoppingCart, User, Package, Download } from "lucide-react";
+import { Link } from "wouter";
 
-/**
- * All content in this page are only for example, replace with your own feature implementation
- * When building pages, remember your instructions in Frontend Workflow, Frontend Best Practices, Design Guide and Common Pitfalls
- */
 export default function Home() {
-  // The userAuth hooks provides authentication state
-  // To implement login/logout functionality, simply call logout() or redirect to getLoginUrl()
-  let { user, loading, error, isAuthenticated, logout } = useAuth();
-
-  // If theme is switchable in App.tsx, we can implement theme toggling like this:
-  // const { theme, toggleTheme } = useTheme();
+  const { user, isAuthenticated } = useAuth();
+  const { data: products, isLoading } = trpc.products.list.useQuery();
 
   return (
     <div className="min-h-screen flex flex-col">
-      <main>
-        {/* Example: lucide-react for icons */}
-        <Loader2 className="animate-spin" />
-        Example Page
-        {/* Example: Streamdown for markdown rendering */}
-        <Streamdown>Any **markdown** content</Streamdown>
-        <Button variant="default">Example Button</Button>
-      </main>
+      {/* Navigation */}
+      <nav className="bg-background/80 backdrop-blur-sm border-b sticky top-0 z-50">
+        <div className="container">
+          <div className="flex items-center justify-between h-16">
+            <Link href="/">
+              <a className="flex items-center gap-3">
+                <img src="/logo.png" alt="LNL Automations" className="h-10 w-auto" />
+                <span className="font-bold text-xl">LNL Automations</span>
+              </a>
+            </Link>
+            
+            <div className="flex items-center gap-4">
+              <Link href="/products">
+                <a className="text-sm font-medium hover:text-primary transition-colors">Products</a>
+              </Link>
+              <Link href="/about">
+                <a className="text-sm font-medium hover:text-primary transition-colors">About</a>
+              </Link>
+              <Link href="/contact">
+                <a className="text-sm font-medium hover:text-primary transition-colors">Contact</a>
+              </Link>
+              <Link href="/faq">
+                <a className="text-sm font-medium hover:text-primary transition-colors">FAQ</a>
+              </Link>
+              
+              {isAuthenticated ? (
+                <>
+                  <Link href="/orders">
+                    <a>
+                      <Button variant="ghost" size="sm">
+                        <Package className="h-4 w-4 mr-2" />
+                        My Orders
+                      </Button>
+                    </a>
+                  </Link>
+                  {user?.role === "admin" && (
+                    <Link href="/admin">
+                      <a>
+                        <Button variant="outline" size="sm">Admin Panel</Button>
+                      </a>
+                    </Link>
+                  )}
+                  <Link href="/cart">
+                    <a>
+                      <Button size="sm">
+                        <ShoppingCart className="h-4 w-4 mr-2" />
+                        Cart
+                      </Button>
+                    </a>
+                  </Link>
+                </>
+              ) : (
+                <>
+                  <Link href="/cart">
+                    <a>
+                      <Button variant="ghost" size="sm">
+                        <ShoppingCart className="h-4 w-4 mr-2" />
+                        Cart
+                      </Button>
+                    </a>
+                  </Link>
+                  <a href={getLoginUrl()}>
+                    <Button size="sm">
+                      <User className="h-4 w-4 mr-2" />
+                      Sign In
+                    </Button>
+                  </a>
+                </>
+              )}
+            </div>
+          </div>
+        </div>
+      </nav>
+
+      {/* Hero Section with Gradient */}
+      <section className="relative overflow-hidden">
+        <div 
+          className="absolute inset-0 bg-gradient-to-br from-[#8a50f1] via-[#b440c4] via-[#d154b3] to-[#efa536]"
+          style={{
+            background: 'linear-gradient(135deg, #8a50f1 0%, #b440c4 25%, #d154b3 50%, #de387f 75%, #efa536 100%)'
+          }}
+        />
+        <div className="relative container py-24 md:py-32">
+          <div className="max-w-3xl mx-auto text-center text-white">
+            <img src="/logo.png" alt="LNL Automations Studio" className="h-32 w-auto mx-auto mb-8" />
+            <h1 className="text-4xl md:text-6xl font-bold mb-6">
+              Premium Digital Products & Automation Solutions
+            </h1>
+            <p className="text-lg md:text-xl mb-8 text-white/90">
+              Discover cutting-edge digital tools, templates, and automation solutions designed to streamline your workflow and boost productivity.
+            </p>
+            <div className="flex gap-4 justify-center">
+              <Link href="/products">
+                <a>
+                  <Button size="lg" variant="secondary" className="bg-white text-primary hover:bg-white/90">
+                    Browse Products
+                  </Button>
+                </a>
+              </Link>
+              <Link href="/about">
+                <a>
+                  <Button size="lg" variant="outline" className="border-white text-white hover:bg-white/10">
+                    Learn More
+                  </Button>
+                </a>
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Featured Products Section */}
+      <section className="py-16 bg-muted/30">
+        <div className="container">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">Featured Products</h2>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              Explore our collection of digital products and physical automation solutions
+            </p>
+          </div>
+
+          {isLoading ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {[1, 2, 3].map((i) => (
+                <Card key={i} className="animate-pulse">
+                  <div className="aspect-video bg-muted" />
+                  <CardHeader>
+                    <div className="h-6 bg-muted rounded w-3/4 mb-2" />
+                    <div className="h-4 bg-muted rounded w-full" />
+                  </CardHeader>
+                </Card>
+              ))}
+            </div>
+          ) : products && products.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {products.slice(0, 6).map((product) => (
+                <Card key={product.id} className="hover:shadow-lg transition-shadow">
+                  {product.imageUrl && (
+                    <div className="aspect-video overflow-hidden rounded-t-lg">
+                      <img 
+                        src={product.imageUrl} 
+                        alt={product.name}
+                        className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                      />
+                    </div>
+                  )}
+                  <CardHeader>
+                    <div className="flex items-start justify-between">
+                      <CardTitle className="line-clamp-1">{product.name}</CardTitle>
+                      {product.type === "digital" && (
+                        <Download className="h-4 w-4 text-primary flex-shrink-0 ml-2" />
+                      )}
+                    </div>
+                    <CardDescription className="line-clamp-2">{product.description}</CardDescription>
+                  </CardHeader>
+                  <CardFooter className="flex items-center justify-between">
+                    <span className="text-2xl font-bold text-primary">
+                      ${(product.price / 100).toFixed(2)}
+                    </span>
+                    <Link href={`/products/${product.id}`}>
+                      <a>
+                        <Button>View Details</Button>
+                      </a>
+                    </Link>
+                  </CardFooter>
+                </Card>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-12">
+              <Package className="h-16 w-16 mx-auto text-muted-foreground mb-4" />
+              <p className="text-lg text-muted-foreground">No products available yet. Check back soon!</p>
+            </div>
+          )}
+
+          {products && products.length > 6 && (
+            <div className="text-center mt-12">
+              <Link href="/products">
+                <a>
+                  <Button size="lg" variant="outline">View All Products</Button>
+                </a>
+              </Link>
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* Features Section */}
+      <section className="py-16">
+        <div className="container">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="text-center">
+              <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-primary/10 flex items-center justify-center">
+                <Download className="h-8 w-8 text-primary" />
+              </div>
+              <h3 className="text-xl font-bold mb-2">Instant Digital Downloads</h3>
+              <p className="text-muted-foreground">
+                Get immediate access to your digital products after purchase. Download anytime from your order history.
+              </p>
+            </div>
+            <div className="text-center">
+              <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-secondary/10 flex items-center justify-center">
+                <Package className="h-8 w-8 text-secondary" />
+              </div>
+              <h3 className="text-xl font-bold mb-2">Physical Products</h3>
+              <p className="text-muted-foreground">
+                Custom automation hardware and physical solutions delivered directly to your door.
+              </p>
+            </div>
+            <div className="text-center">
+              <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-accent/10 flex items-center justify-center">
+                <ShoppingCart className="h-8 w-8 text-accent" />
+              </div>
+              <h3 className="text-xl font-bold mb-2">Secure Checkout</h3>
+              <p className="text-muted-foreground">
+                Safe and secure payment processing powered by Stripe. Your data is always protected.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="bg-muted/50 border-t mt-auto">
+        <div className="container py-8">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+            <div>
+              <img src="/logo.png" alt="LNL Automations" className="h-10 w-auto mb-4" />
+              <p className="text-sm text-muted-foreground">
+                Premium digital products and automation solutions for modern businesses.
+              </p>
+            </div>
+            <div>
+              <h4 className="font-semibold mb-4">Products</h4>
+              <ul className="space-y-2 text-sm text-muted-foreground">
+                <li><Link href="/products"><a className="hover:text-foreground transition-colors">All Products</a></Link></li>
+                <li><Link href="/products?type=digital"><a className="hover:text-foreground transition-colors">Digital Downloads</a></Link></li>
+                <li><Link href="/products?type=physical"><a className="hover:text-foreground transition-colors">Physical Products</a></Link></li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="font-semibold mb-4">Support</h4>
+              <ul className="space-y-2 text-sm text-muted-foreground">
+                <li><Link href="/faq"><a className="hover:text-foreground transition-colors">FAQ</a></Link></li>
+                <li><Link href="/contact"><a className="hover:text-foreground transition-colors">Contact Us</a></Link></li>
+                <li><Link href="/refund-policy"><a className="hover:text-foreground transition-colors">Refund Policy</a></Link></li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="font-semibold mb-4">Company</h4>
+              <ul className="space-y-2 text-sm text-muted-foreground">
+                <li><Link href="/about"><a className="hover:text-foreground transition-colors">About Us</a></Link></li>
+                {isAuthenticated && user?.role === "admin" && (
+                  <li><Link href="/admin"><a className="hover:text-foreground transition-colors">Admin Panel</a></Link></li>
+                )}
+              </ul>
+            </div>
+          </div>
+          <div className="border-t mt-8 pt-8 text-center text-sm text-muted-foreground">
+            <p>&copy; {new Date().getFullYear()} LNL Automations Studio. All rights reserved.</p>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }

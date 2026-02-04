@@ -25,4 +25,77 @@ export const users = mysqlTable("users", {
 export type User = typeof users.$inferSelect;
 export type InsertUser = typeof users.$inferInsert;
 
-// TODO: Add your tables here
+/**
+ * Products table - stores both digital and physical products
+ */
+export const products = mysqlTable("products", {
+  id: int("id").autoincrement().primaryKey(),
+  name: varchar("name", { length: 255 }).notNull(),
+  description: text("description").notNull(),
+  price: int("price").notNull(), // Price in cents
+  type: mysqlEnum("type", ["digital", "physical"]).notNull(),
+  imageUrl: text("imageUrl"), // S3 URL for product image
+  digitalFileKey: text("digitalFileKey"), // S3 key for digital product file
+  digitalFileName: varchar("digitalFileName", { length: 255 }), // Original filename for downloads
+  isActive: int("isActive").default(1).notNull(), // 1 = active, 0 = inactive
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type Product = typeof products.$inferSelect;
+export type InsertProduct = typeof products.$inferInsert;
+
+/**
+ * Orders table - stores customer orders with Stripe payment info
+ */
+export const orders = mysqlTable("orders", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId"), // Null for guest checkouts
+  customerEmail: varchar("customerEmail", { length: 320 }).notNull(),
+  customerName: varchar("customerName", { length: 255 }),
+  stripePaymentIntentId: varchar("stripePaymentIntentId", { length: 255 }).notNull().unique(),
+  stripeCheckoutSessionId: varchar("stripeCheckoutSessionId", { length: 255 }),
+  totalAmount: int("totalAmount").notNull(), // Total in cents
+  status: mysqlEnum("status", ["pending", "completed", "failed", "refunded"]).default("pending").notNull(),
+  shippingAddress: text("shippingAddress"), // JSON string for physical products
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type Order = typeof orders.$inferSelect;
+export type InsertOrder = typeof orders.$inferInsert;
+
+/**
+ * Order items table - individual products in each order
+ */
+export const orderItems = mysqlTable("orderItems", {
+  id: int("id").autoincrement().primaryKey(),
+  orderId: int("orderId").notNull(),
+  productId: int("productId").notNull(),
+  productName: varchar("productName", { length: 255 }).notNull(), // Snapshot at purchase time
+  productType: mysqlEnum("productType", ["digital", "physical"]).notNull(),
+  quantity: int("quantity").notNull().default(1),
+  priceAtPurchase: int("priceAtPurchase").notNull(), // Price in cents at time of purchase
+  digitalFileKey: text("digitalFileKey"), // S3 key snapshot for digital products
+  digitalFileName: varchar("digitalFileName", { length: 255 }),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type OrderItem = typeof orderItems.$inferSelect;
+export type InsertOrderItem = typeof orderItems.$inferInsert;
+
+/**
+ * Digital downloads table - secure download tokens with expiry
+ */
+export const digitalDownloads = mysqlTable("digitalDownloads", {
+  id: int("id").autoincrement().primaryKey(),
+  orderItemId: int("orderItemId").notNull(),
+  downloadToken: varchar("downloadToken", { length: 64 }).notNull().unique(),
+  downloadCount: int("downloadCount").default(0).notNull(),
+  maxDownloads: int("maxDownloads").default(5).notNull(),
+  expiresAt: timestamp("expiresAt").notNull(), // Token expiry (e.g., 30 days from purchase)
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type DigitalDownload = typeof digitalDownloads.$inferSelect;
+export type InsertDigitalDownload = typeof digitalDownloads.$inferInsert;
