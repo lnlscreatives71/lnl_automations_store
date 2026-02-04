@@ -15,6 +15,13 @@
       "when": 1770207604595,
       "tag": "0001_magenta_glorian",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1770209878992,
+      "tag": "0002_tricky_justin_hammer",
+      "breakpoints": true
     }
   ]
 }

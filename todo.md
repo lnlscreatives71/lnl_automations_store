@@ -79,3 +79,10 @@
 
 ## Updates
 - [x] Replace logo with new version throughout the site
+
+## Customer Reviews Feature
+- [x] Create reviews database table with rating, comment, user, product
+- [x] Add backend API for submitting and fetching reviews
+- [x] Display reviews on product pages with star ratings
+- [x] Allow only verified purchasers to leave reviews
+- [x] Show average rating on product detail page

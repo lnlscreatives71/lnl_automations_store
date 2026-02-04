@@ -5,7 +5,8 @@ import {
   products, InsertProduct, Product,
   orders, InsertOrder, Order,
   orderItems, InsertOrderItem, OrderItem,
-  digitalDownloads, InsertDigitalDownload, DigitalDownload
+  digitalDownloads, InsertDigitalDownload, DigitalDownload,
+  reviews, InsertReview, Review
 } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
@@ -276,4 +277,106 @@ export async function getDigitalDownloadsByOrderItemId(orderItemId: number): Pro
   
   const result = await db.select().from(digitalDownloads).where(eq(digitalDownloads.orderItemId, orderItemId));
   return result;
+}
+
+// ===== Review Queries =====
+
+export async function createReview(review: InsertReview): Promise<Review> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  const result = await db.insert(reviews).values(review);
+  const insertedId = Number(result[0].insertId);
+  
+  const newReview = await getReviewById(insertedId);
+  if (!newReview) throw new Error("Failed to retrieve created review");
+  
+  return newReview;
+}
+
+export async function getReviewById(id: number): Promise<Review | undefined> {
+  const db = await getDb();
+  if (!db) return undefined;
+  
+  const result = await db.select().from(reviews).where(eq(reviews.id, id)).limit(1);
+  return result[0];
+}
+
+export async function getProductReviews(productId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  
+  const result = await db
+    .select({
+      id: reviews.id,
+      rating: reviews.rating,
+      comment: reviews.comment,
+      isVerified: reviews.isVerified,
+      createdAt: reviews.createdAt,
+      userId: reviews.userId,
+      userName: users.name,
+    })
+    .from(reviews)
+    .leftJoin(users, eq(reviews.userId, users.id))
+    .where(eq(reviews.productId, productId))
+    .orderBy(desc(reviews.createdAt));
+  
+  return result;
+}
+
+export async function hasUserPurchasedProduct(userId: number, productId: number): Promise<boolean> {
+  const db = await getDb();
+  if (!db) return false;
+  
+  const result = await db
+    .select({ orderId: orderItems.orderId })
+    .from(orderItems)
+    .innerJoin(orders, eq(orderItems.orderId, orders.id))
+    .where(
+      and(
+        eq(orders.userId, userId),
+        eq(orderItems.productId, productId),
+        eq(orders.status, "completed")
+      )
+    )
+    .limit(1);
+  
+  return result.length > 0;
+}
+
+export async function hasUserReviewedProduct(userId: number, productId: number): Promise<boolean> {
+  const db = await getDb();
+  if (!db) return false;
+  
+  const result = await db
+    .select({ id: reviews.id })
+    .from(reviews)
+    .where(
+      and(
+        eq(reviews.userId, userId),
+        eq(reviews.productId, productId)
+      )
+    )
+    .limit(1);
+  
+  return result.length > 0;
+}
+
+export async function getProductAverageRating(productId: number): Promise<{ average: number; count: number }> {
+  const db = await getDb();
+  if (!db) return { average: 0, count: 0 };
+  
+  const productReviews = await db
+    .select({ rating: reviews.rating })
+    .from(reviews)
+    .where(eq(reviews.productId, productId));
+  
+  if (productReviews.length === 0) {
+    return { average: 0, count: 0 };
+  }
+  
+  const sum = productReviews.reduce((acc, r) => acc + r.rating, 0);
+  const average = sum / productReviews.length;
+  
+  return { average: Math.round(average * 10) / 10, count: productReviews.length };
 }

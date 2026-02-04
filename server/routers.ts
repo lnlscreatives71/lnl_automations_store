@@ -307,6 +307,94 @@ export const appRouter = router({
         return downloads;
       }),
   }),
+
+  // Reviews
+  reviews: router({
+    getByProduct: publicProcedure
+      .input(z.object({ productId: z.number() }))
+      .query(async ({ input }) => {
+        return await db.getProductReviews(input.productId);
+      }),
+
+    getAverageRating: publicProcedure
+      .input(z.object({ productId: z.number() }))
+      .query(async ({ input }) => {
+        return await db.getProductAverageRating(input.productId);
+      }),
+
+    canUserReview: protectedProcedure
+      .input(z.object({ productId: z.number() }))
+      .query(async ({ ctx, input }) => {
+        const hasPurchased = await db.hasUserPurchasedProduct(ctx.user.id, input.productId);
+        const hasReviewed = await db.hasUserReviewedProduct(ctx.user.id, input.productId);
+        
+        return {
+          canReview: hasPurchased && !hasReviewed,
+          hasPurchased,
+          hasReviewed,
+        };
+      }),
+
+    create: protectedProcedure
+      .input(z.object({
+        productId: z.number(),
+        rating: z.number().min(1).max(5),
+        comment: z.string().optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        // Verify user has purchased the product
+        const hasPurchased = await db.hasUserPurchasedProduct(ctx.user.id, input.productId);
+        if (!hasPurchased) {
+          throw new TRPCError({
+            code: 'FORBIDDEN',
+            message: 'You must purchase this product before leaving a review',
+          });
+        }
+
+        // Check if user already reviewed
+        const hasReviewed = await db.hasUserReviewedProduct(ctx.user.id, input.productId);
+        if (hasReviewed) {
+          throw new TRPCError({
+            code: 'BAD_REQUEST',
+            message: 'You have already reviewed this product',
+          });
+        }
+
+        // Get the order ID for this user and product
+        const userOrders = await db.getOrdersByUserId(ctx.user.id);
+        let orderId: number | null = null;
+        
+        for (const order of userOrders) {
+          if (order.status === 'completed') {
+            const items = await db.getOrderItemsByOrderId(order.id);
+            const hasProduct = items.some(item => item.productId === input.productId);
+            if (hasProduct) {
+              orderId = order.id;
+              break;
+            }
+          }
+        }
+
+        if (!orderId) {
+          throw new TRPCError({
+            code: 'NOT_FOUND',
+            message: 'Order not found for this product',
+          });
+        }
+
+        // Create the review
+        const review = await db.createReview({
+          productId: input.productId,
+          userId: ctx.user.id,
+          orderId,
+          rating: input.rating,
+          comment: input.comment || null,
+          isVerified: 1,
+        });
+
+        return review;
+      }),
+  }),
 });
 
 export type AppRouter = typeof appRouter;

@@ -99,3 +99,21 @@ export const digitalDownloads = mysqlTable("digitalDownloads", {
 
 export type DigitalDownload = typeof digitalDownloads.$inferSelect;
 export type InsertDigitalDownload = typeof digitalDownloads.$inferInsert;
+
+/**
+ * Product reviews table - customer reviews and ratings
+ */
+export const reviews = mysqlTable("reviews", {
+  id: int("id").autoincrement().primaryKey(),
+  productId: int("productId").notNull(),
+  userId: int("userId").notNull(),
+  orderId: int("orderId").notNull(), // Ensures only verified purchasers can review
+  rating: int("rating").notNull(), // 1-5 stars
+  comment: text("comment"),
+  isVerified: int("isVerified").default(1).notNull(), // 1 = verified purchase
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type Review = typeof reviews.$inferSelect;
+export type InsertReview = typeof reviews.$inferInsert;
