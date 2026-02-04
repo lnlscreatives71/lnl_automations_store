@@ -76,3 +76,6 @@
 - [x] Implement search bar in header for product search
 - [x] Add search functionality to backend API
 - [x] Create search results page or filter products page
+
+## Updates
+- [x] Replace logo with new version throughout the site
