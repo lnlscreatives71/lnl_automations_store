@@ -41,6 +41,22 @@ export const appRouter = router({
       return await db.getAllProducts();
     }),
 
+    search: publicProcedure
+      .input(z.object({ query: z.string() }))
+      .query(async ({ input }) => {
+        const allProducts = await db.getAllProducts();
+        const trimmedQuery = input.query.trim();
+        if (!trimmedQuery) {
+          return allProducts;
+        }
+        const searchTerm = trimmedQuery.toLowerCase();
+        return allProducts.filter(
+          (product) =>
+            product.name.toLowerCase().includes(searchTerm) ||
+            (product.description && product.description.toLowerCase().includes(searchTerm))
+        );
+      }),
+
     getById: publicProcedure
       .input(z.object({ id: z.number() }))
       .query(async ({ input }) => {

@@ -1,14 +1,27 @@
 import { useAuth } from "@/_core/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import { getLoginUrl } from "@/const";
 import { trpc } from "@/lib/trpc";
-import { ShoppingCart, User, Package, Download } from "lucide-react";
-import { Link } from "wouter";
+import { ShoppingCart, User, Package, Download, Search } from "lucide-react";
+import { Link, useLocation } from "wouter";
+import { useState } from "react";
 
 export default function Home() {
   const { user, isAuthenticated } = useAuth();
   const { data: products, isLoading } = trpc.products.list.useQuery();
+  const [searchQuery, setSearchQuery] = useState('');
+  const [, setLocation] = useLocation();
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      setLocation(`/products?search=${encodeURIComponent(searchQuery.trim())}`);
+    } else {
+      setLocation('/products');
+    }
+  };
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -18,8 +31,22 @@ export default function Home() {
           <div className="flex items-center justify-between h-16">
             <Link href="/" className="flex items-center gap-3">
               <img src="/logo.png" alt="LNL Automations" className="h-10 w-auto" />
-              <span className="font-bold text-xl">LNL Automations</span>
+              <span className="font-bold text-xl hidden md:inline">LNL Automations</span>
             </Link>
+            
+            {/* Search Bar */}
+            <form onSubmit={handleSearch} className="flex-1 max-w-md mx-4">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  type="search"
+                  placeholder="Search products..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-10 pr-4"
+                />
+              </div>
+            </form>
             
             <div className="flex items-center gap-4">
               <Link href="/products" className="text-sm font-medium hover:text-primary transition-colors">Products</Link>

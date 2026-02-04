@@ -71,3 +71,8 @@
 
 ## Bug Fixes
 - [x] Fix nested anchor tags error (Link wrapping <a> elements)
+
+## New Features
+- [x] Implement search bar in header for product search
+- [x] Add search functionality to backend API
+- [x] Create search results page or filter products page

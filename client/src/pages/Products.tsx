@@ -1,14 +1,38 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import { trpc } from "@/lib/trpc";
-import { Download, ShoppingCart } from "lucide-react";
-import { Link } from "wouter";
+import { Download, ShoppingCart, Search } from "lucide-react";
+import { Link, useLocation } from "wouter";
 import { useCart } from "@/contexts/CartContext";
 import { toast } from "sonner";
+import { useState, useEffect } from "react";
 
 export default function Products() {
-  const { data: products, isLoading } = trpc.products.list.useQuery();
+  const [location] = useLocation();
+  const searchParams = new URLSearchParams(location.split('?')[1] || '');
+  const initialSearch = searchParams.get('search') || '';
+  
+  const [searchQuery, setSearchQuery] = useState(initialSearch);
+  const [debouncedSearch, setDebouncedSearch] = useState(initialSearch);
+  
+  const { data: products, isLoading } = trpc.products.search.useQuery({ query: debouncedSearch });
   const { addItem } = useCart();
+
+  // Debounce search input
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(searchQuery);
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
+
+  // Update search when URL changes
+  useEffect(() => {
+    const urlSearch = searchParams.get('search') || '';
+    setSearchQuery(urlSearch);
+    setDebouncedSearch(urlSearch);
+  }, [location]);
 
   const handleAddToCart = (product: any) => {
     addItem(product);
@@ -21,19 +45,30 @@ export default function Products() {
       <header className="bg-background border-b sticky top-0 z-50">
         <div className="container">
           <div className="flex items-center justify-between h-16">
-            <Link href="/">
-              <a className="flex items-center gap-3">
-                <img src="/logo.png" alt="LNL Automations" className="h-10 w-auto" />
-                <span className="font-bold text-xl">LNL Automations</span>
-              </a>
+            <Link href="/" className="flex items-center gap-3">
+              <img src="/logo.png" alt="LNL Automations" className="h-10 w-auto" />
+              <span className="font-bold text-xl hidden md:inline">LNL Automations</span>
             </Link>
+            
+            {/* Search Bar */}
+            <div className="flex-1 max-w-md mx-4">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  type="search"
+                  placeholder="Search products..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-10 pr-4"
+                />
+              </div>
+            </div>
+            
             <Link href="/cart">
-              <a>
-                <Button>
-                  <ShoppingCart className="h-4 w-4 mr-2" />
-                  Cart
-                </Button>
-              </a>
+              <Button>
+                <ShoppingCart className="h-4 w-4 mr-2" />
+                Cart
+              </Button>
             </Link>
           </div>
         </div>
@@ -41,8 +76,15 @@ export default function Products() {
 
       <div className="container py-12">
         <div className="mb-8">
-          <h1 className="text-4xl font-bold mb-2">All Products</h1>
-          <p className="text-muted-foreground">Browse our complete collection of digital and physical products</p>
+          <h1 className="text-4xl font-bold mb-2">
+            {debouncedSearch ? `Search Results for "${debouncedSearch}"` : 'All Products'}
+          </h1>
+          <p className="text-muted-foreground">
+            {debouncedSearch 
+              ? `Found ${products?.length || 0} product${products?.length === 1 ? '' : 's'}`
+              : 'Browse our complete collection of digital and physical products'
+            }
+          </p>
         </div>
 
         {isLoading ? (
@@ -85,9 +127,7 @@ export default function Products() {
                       ${(product.price / 100).toFixed(2)}
                     </span>
                     <Link href={`/products/${product.id}`}>
-                      <a>
-                        <Button variant="outline" size="sm">View Details</Button>
-                      </a>
+                      <Button variant="outline" size="sm">View Details</Button>
                     </Link>
                   </div>
                   <Button 
@@ -103,7 +143,21 @@ export default function Products() {
           </div>
         ) : (
           <div className="text-center py-12">
-            <p className="text-lg text-muted-foreground">No products available yet.</p>
+            <p className="text-lg text-muted-foreground">
+              {debouncedSearch 
+                ? `No products found matching "${debouncedSearch}"`
+                : 'No products available yet.'
+              }
+            </p>
+            {debouncedSearch && (
+              <Button 
+                variant="outline" 
+                className="mt-4"
+                onClick={() => setSearchQuery('')}
+              >
+                Clear Search
+              </Button>
+            )}
           </div>
         )}
       </div>
