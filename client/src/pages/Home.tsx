@@ -50,6 +50,7 @@ export default function Home() {
             
             <div className="flex items-center gap-4">
               <Link href="/products" className="text-sm font-medium hover:text-primary transition-colors">Products</Link>
+              <Link href="/blog" className="text-sm font-medium hover:text-primary transition-colors">Blog</Link>
               <Link href="/about" className="text-sm font-medium hover:text-primary transition-colors">About</Link>
               <Link href="/contact" className="text-sm font-medium hover:text-primary transition-colors">Contact</Link>
               <Link href="/faq" className="text-sm font-medium hover:text-primary transition-colors">FAQ</Link>
@@ -200,8 +201,129 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Features Section */}
+      {/* Product Showcase Section */}
+      <section className="py-16 bg-muted/30">
+        <div className="container">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">See Our Products in Action</h2>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              Watch how our automation solutions transform workflows and boost productivity
+            </p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <Card className="overflow-hidden">
+              <div className="aspect-video bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
+                <div className="text-center text-white p-6">
+                  <Package className="h-16 w-16 mx-auto mb-4" />
+                  <p className="text-sm">Product demo video placeholder</p>
+                  <p className="text-xs mt-2 opacity-80">Upload your product videos/GIFs here</p>
+                </div>
+              </div>
+              <CardHeader>
+                <CardTitle>Agent Workflows Demo</CardTitle>
+                <CardDescription>See how AI agents automate complex business processes</CardDescription>
+              </CardHeader>
+            </Card>
+            <Card className="overflow-hidden">
+              <div className="aspect-video bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center">
+                <div className="text-center text-white p-6">
+                  <Download className="h-16 w-16 mx-auto mb-4" />
+                  <p className="text-sm">Product demo video placeholder</p>
+                  <p className="text-xs mt-2 opacity-80">Upload your product videos/GIFs here</p>
+                </div>
+              </div>
+              <CardHeader>
+                <CardTitle>Voice Bot Integration</CardTitle>
+                <CardDescription>Watch voice assistants handle customer inquiries</CardDescription>
+              </CardHeader>
+            </Card>
+            <Card className="overflow-hidden">
+              <div className="aspect-video bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center">
+                <div className="text-center text-white p-6">
+                  <ShoppingCart className="h-16 w-16 mx-auto mb-4" />
+                  <p className="text-sm">Product demo video placeholder</p>
+                  <p className="text-xs mt-2 opacity-80">Upload your product videos/GIFs here</p>
+                </div>
+              </div>
+              <CardHeader>
+                <CardTitle>Automation Templates</CardTitle>
+                <CardDescription>Pre-built workflows ready to deploy in minutes</CardDescription>
+              </CardHeader>
+            </Card>
+          </div>
+        </div>
+      </section>
+
+      {/* Testimonials Section */}
       <section className="py-16">
+        <div className="container">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">What Our Customers Say</h2>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              Join hundreds of satisfied customers who have transformed their businesses with our automation solutions
+            </p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <Card>
+              <CardHeader>
+                <div className="flex items-center gap-1 mb-2">
+                  {[...Array(5)].map((_, i) => (
+                    <svg key={i} className="w-5 h-5 fill-yellow-400" viewBox="0 0 20 20">
+                      <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" />
+                    </svg>
+                  ))}
+                </div>
+                <CardTitle>Sarah Mitchell</CardTitle>
+                <CardDescription>Marketing Director, TechFlow Inc.</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <p className="text-muted-foreground italic">
+                  "The automated workflows from LNL Automations saved our team 20+ hours per week. The voice bot integration was seamless and our customer satisfaction scores increased by 35%. Absolutely worth every penny!"
+                </p>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader>
+                <div className="flex items-center gap-1 mb-2">
+                  {[...Array(5)].map((_, i) => (
+                    <svg key={i} className="w-5 h-5 fill-yellow-400" viewBox="0 0 20 20">
+                      <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" />
+                    </svg>
+                  ))}
+                </div>
+                <CardTitle>Marcus Johnson</CardTitle>
+                <CardDescription>CEO, Digital Solutions Pro</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <p className="text-muted-foreground italic">
+                  "I purchased three agent workflow templates and they paid for themselves in the first month. The quality is exceptional and the support team is incredibly responsive. Highly recommend for any business looking to scale!"
+                </p>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader>
+                <div className="flex items-center gap-1 mb-2">
+                  {[...Array(5)].map((_, i) => (
+                    <svg key={i} className="w-5 h-5 fill-yellow-400" viewBox="0 0 20 20">
+                      <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" />
+                    </svg>
+                  ))}
+                </div>
+                <CardTitle>Emily Rodriguez</CardTitle>
+                <CardDescription>Operations Manager, CloudVenture</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <p className="text-muted-foreground italic">
+                  "The social media content packs are a game-changer! We went from spending 10 hours a week on content creation to just 2 hours. The viral hooks actually work - our engagement tripled in 30 days. Thank you LNL Automations!"
+                </p>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </section>
+
+      {/* Features Section */}
+      <section className="py-16 bg-muted/30">
         <div className="container">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="text-center">

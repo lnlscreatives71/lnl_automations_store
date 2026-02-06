@@ -18,6 +18,7 @@ const About = React.lazy(() => import("./pages/About"));
 const Contact = React.lazy(() => import("./pages/Contact"));
 const FAQ = React.lazy(() => import("./pages/FAQ"));
 const RefundPolicy = React.lazy(() => import("./pages/RefundPolicy"));
+const Blog = React.lazy(() => import("./pages/Blog"));
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -35,6 +36,7 @@ function Router() {
         <Route path={"/contact"} component={Contact} />
         <Route path={"/faq"} component={FAQ} />
         <Route path={"/refund-policy"} component={RefundPolicy} />
+        <Route path={"/blog"} component={Blog} />
         <Route path={"/404"} component={NotFound} />
         {/* Final fallback route */}
         <Route component={NotFound} />
