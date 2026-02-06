@@ -116,3 +116,12 @@
 - [x] Display category badges on product cards
 - [x] Add category navigation/filter menu
 - [x] Update product creation/editing to include category
+
+
+## Admin Panel Updates
+- [x] Hide Admin Panel button from public navigation (only show to admin users) - already implemented
+- [x] Create comprehensive admin panel documentation
+- [x] Document how to access admin panel
+- [x] Document how to add/edit/delete products
+- [x] Document how to upload images and files
+- [x] Document how to manage orders
