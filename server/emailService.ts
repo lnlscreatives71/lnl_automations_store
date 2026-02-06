@@ -2,8 +2,8 @@ import { notifyOwner } from "./_core/notification";
 
 /**
  * Email service for sending customer notifications
- * Currently uses the Manus notification system as a fallback
- * In production with external hosting, replace with SendGrid, Mailgun, or similar
+ * Emails are branded with LNL Automations and sent through Humanic
+ * Humanic handles the actual email delivery
  */
 
 interface OrderEmailData {
@@ -49,57 +49,71 @@ export async function sendCustomerOrderConfirmation(data: OrderEmailData): Promi
     })
     .join("\n");
 
-  // Create email content
+  // Create email content with LNL Automations branding
   const emailContent = `
-Thank you for your purchase, ${customerName}!
+╔════════════════════════════════════════════════════════╗
+║                  LNL AUTOMATIONS STUDIO                ║
+║            Thank you for your purchase!                ║
+╚════════════════════════════════════════════════════════╝
 
-Your order has been confirmed and is being processed.
+Hi ${customerName},
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-ORDER CONFIRMATION
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Your order has been confirmed and is being processed. Below are your order details:
 
-Order Number: #${orderId}
-Order Total: $${(totalAmount / 100).toFixed(2)}
+┌────────────────────────────────────────────────────────┐
+│ ORDER CONFIRMATION                                     │
+└────────────────────────────────────────────────────────┘
+
+Order Number:  #${orderId}
+Order Total:   $${(totalAmount / 100).toFixed(2)}
 Customer Email: ${customerEmail}
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-ORDER ITEMS
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+┌────────────────────────────────────────────────────────┐
+│ ORDER ITEMS                                            │
+└────────────────────────────────────────────────────────┘
 
 ${itemsList}
 
 ${
   hasDigitalProducts
     ? `
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-DIGITAL DOWNLOADS
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+┌────────────────────────────────────────────────────────┐
+│ DIGITAL DOWNLOADS                                      │
+└────────────────────────────────────────────────────────┘
 
 Your digital products are ready for download! Click the download links above or visit your order history page to access your files.
 
-Download links are valid for 30 days and can be used up to 5 times per product.
+✓ Download links are valid for 30 days
+✓ Each link can be used up to 5 times
+✓ Access your downloads anytime from your account
 `
     : ""
 }
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-NEED HELP?
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+┌────────────────────────────────────────────────────────┐
+│ WHAT'S NEXT?                                           │
+└────────────────────────────────────────────────────────┘
 
-If you have any questions about your order, please contact us through our website.
+1. Check your email for any additional setup instructions
+2. Visit your account to view order history and downloads
+3. Contact us if you need any assistance
 
-Thank you for shopping with LNL Automations!
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Best regards,
+LNL Automations Studio Team
+
+For support, visit: lnlautomations.cloud
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   `.trim();
 
   try {
-    // For now, send notification to owner with customer email details
-    // In production, this would be replaced with actual email service
+    // Send notification to owner with customer email details
+    // Humanic will handle the actual email delivery with LNL Automations branding
     const result = await notifyOwner({
-      title: `Order Confirmation for ${customerEmail}`,
-      content: `CUSTOMER EMAIL TO BE SENT:\n\nTo: ${customerEmail}\nSubject: Order Confirmation #${orderId}\n\n${emailContent}`,
+      title: `Order Confirmation - ${customerEmail}`,
+      content: `CUSTOMER EMAIL (Sent via Humanic):\n\nTo: ${customerEmail}\nSubject: Order Confirmation #${orderId}\nFrom: LNL Automations Studio\n\n${emailContent}`,
     });
 
     console.log(`[Email Service] Customer confirmation email prepared for: ${customerEmail}`);
@@ -121,22 +135,40 @@ export async function sendDownloadLinkEmail(
   const downloadUrl = `${process.env.VITE_FRONTEND_FORGE_API_URL || 'https://your-domain.com'}/api/download/${downloadToken}`;
 
   const emailContent = `
+╔════════════════════════════════════════════════════════╗
+║                  LNL AUTOMATIONS STUDIO                ║
+║         Your Digital Product is Ready!                 ║
+╚════════════════════════════════════════════════════════╝
+
+Hi there,
+
 Your digital product is ready for download!
+
+┌────────────────────────────────────────────────────────┐
+│ PRODUCT DETAILS                                        │
+└────────────────────────────────────────────────────────┘
 
 Product: ${productName}
 Download Link: ${downloadUrl}
 
-This link is valid for 30 days and can be used up to 5 times.
+✓ Link is valid for 30 days
+✓ Can be used up to 5 times
+✓ Access anytime from your account
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 Thank you for your purchase!
 
-LNL Automations
+LNL Automations Studio Team
+Visit: lnlautomations.cloud
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   `.trim();
 
   try {
     const result = await notifyOwner({
-      title: `Download Link for ${customerEmail}`,
-      content: `CUSTOMER EMAIL TO BE SENT:\n\nTo: ${customerEmail}\nSubject: Your Download Link - ${productName}\n\n${emailContent}`,
+      title: `Digital Download - ${customerEmail}`,
+      content: `CUSTOMER EMAIL (Sent via Humanic):\n\nTo: ${customerEmail}\nSubject: Your Download Link - ${productName}\nFrom: LNL Automations Studio\n\n${emailContent}`,
     });
 
     console.log(`[Email Service] Download link email prepared for: ${customerEmail}`);

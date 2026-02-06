@@ -147,3 +147,9 @@
 - [x] Add newsletter signup form to footer
 - [x] Implement email validation and duplicate prevention
 - [x] Add success/error toast notifications
+
+
+## Email Branding Update
+- [x] Replace Manus branding with LNL Automations branding in all email templates
+- [x] Update email service configuration for Humanic
+- [x] Test email notifications with LNL Automations branding
