@@ -125,3 +125,7 @@
 - [x] Document how to add/edit/delete products
 - [x] Document how to upload images and files
 - [x] Document how to manage orders
+
+
+## UI Improvements
+- [x] Increase logo size in navigation header across all pages

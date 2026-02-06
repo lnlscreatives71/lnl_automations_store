@@ -11,7 +11,7 @@ export default function Contact() {
           <div className="flex items-center justify-between h-16">
             <Link href="/">
               <a className="flex items-center gap-3">
-                <img src="/logo.png" alt="LNL Automations" className="h-10 w-auto" />
+                <img src="/logo.png" alt="LNL Automations" className="h-16 w-auto" />
                 <span className="font-bold text-xl">LNL Automations</span>
               </a>
             </Link>

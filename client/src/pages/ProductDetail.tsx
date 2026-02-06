@@ -31,7 +31,7 @@ export default function ProductDetail() {
           <div className="container">
             <div className="flex items-center justify-between h-16">
               <Link href="/" className="flex items-center gap-3">
-                <img src="/logo.png" alt="LNL Automations" className="h-10 w-auto" />
+                <img src="/logo.png" alt="LNL Automations" className="h-16 w-auto" />
                 <span className="font-bold text-xl">LNL Automations</span>
               </Link>
               <Link href="/products">
@@ -58,7 +58,7 @@ export default function ProductDetail() {
           <div className="container">
             <div className="flex items-center justify-between h-16">
               <Link href="/" className="flex items-center gap-3">
-                <img src="/logo.png" alt="LNL Automations" className="h-10 w-auto" />
+                <img src="/logo.png" alt="LNL Automations" className="h-16 w-auto" />
                 <span className="font-bold text-xl">LNL Automations</span>
               </Link>
               <Link href="/products">
@@ -81,7 +81,7 @@ export default function ProductDetail() {
         <div className="container">
           <div className="flex items-center justify-between h-16">
             <Link href="/" className="flex items-center gap-3">
-              <img src="/logo.png" alt="LNL Automations" className="h-10 w-auto" />
+              <img src="/logo.png" alt="LNL Automations" className="h-16 w-auto" />
               <span className="font-bold text-xl">LNL Automations</span>
             </Link>
             <Link href="/products">
