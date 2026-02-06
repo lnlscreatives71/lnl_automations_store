@@ -3,6 +3,7 @@ import Stripe from "stripe";
 import * as db from "../db";
 import { nanoid } from "nanoid";
 import { notifyOwner } from "../_core/notification";
+import { sendCustomerOrderConfirmation } from "../emailService";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: "2026-01-28.clover",
@@ -165,8 +166,44 @@ Please process this order and arrange shipment.
     console.log(`[Stripe Webhook] Sent owner notification for physical product order: ${order.id}`);
   }
 
-  // TODO: Send confirmation email to customer
+  // Send confirmation email to customer
+  const emailItems = [];
+  for (const item of items) {
+    const product = await db.getProductById(item.productId);
+    if (product) {
+      // Get download token if digital product
+      let downloadToken;
+      if (product.type === "digital") {
+        const orderItem = await db.getOrderItemsByOrderId(order.id);
+        const matchingItem = orderItem.find(oi => oi.productId === product.id);
+        if (matchingItem) {
+          const downloads = await db.getDigitalDownloadsByOrderItemId(matchingItem.id);
+          const download = downloads[0];
+          downloadToken = download?.downloadToken;
+        }
+      }
+
+      emailItems.push({
+        productName: product.name,
+        quantity: item.quantity,
+        price: product.price,
+        type: product.type,
+        downloadToken,
+      });
+    }
+  }
+
+  await sendCustomerOrderConfirmation({
+    customerEmail,
+    customerName,
+    orderId: order.id,
+    totalAmount: order.totalAmount,
+    items: emailItems,
+    hasDigitalProducts,
+  });
+
   console.log(`[Stripe Webhook] Order processing completed for: ${order.id}`);
+  console.log(`[Stripe Webhook] Customer confirmation email sent to: ${customerEmail}`);
 }
 
 async function handlePaymentIntentSucceeded(paymentIntent: Stripe.PaymentIntent) {

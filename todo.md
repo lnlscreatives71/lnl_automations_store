@@ -99,3 +99,10 @@
 - [x] Create deployment documentation for external hosting (Hostinger)
 - [x] Document environment variables needed for production
 - [x] Create final production checkpoint
+
+
+## Email Enhancements
+- [x] Send order confirmation email to customers after purchase
+- [x] Include order details and receipt in customer email
+- [x] Include download links for digital products in customer email
+- [x] Add email templates for professional formatting
