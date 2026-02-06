@@ -129,3 +129,6 @@
 
 ## UI Improvements
 - [x] Increase logo size in navigation header across all pages
+
+## Documentation Updates
+- [x] Add complete tech stack section to ADMIN_PANEL_GUIDE.md

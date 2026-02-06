@@ -6,16 +6,219 @@ Complete documentation for managing your e-commerce store through the admin pane
 
 ## Table of Contents
 
-1. [Accessing the Admin Panel](#accessing-the-admin-panel)
-2. [Admin Panel Overview](#admin-panel-overview)
-3. [Adding Products](#adding-products)
-4. [Uploading Images and Files](#uploading-images-and-files)
-5. [Editing Products](#editing-products)
-6. [Deleting Products](#deleting-products)
-7. [Managing Orders](#managing-orders)
-8. [Managing Reviews](#managing-reviews)
-9. [Granting Admin Access](#granting-admin-access)
-10. [Troubleshooting](#troubleshooting)
+1. [Tech Stack Overview](#tech-stack-overview)
+2. [Accessing the Admin Panel](#accessing-the-admin-panel)
+3. [Admin Panel Overview](#admin-panel-overview)
+4. [Adding Products](#adding-products)
+5. [Uploading Images and Files](#uploading-images-and-files)
+6. [Editing Products](#editing-products)
+7. [Deleting Products](#deleting-products)
+8. [Managing Orders](#managing-orders)
+9. [Managing Reviews](#managing-reviews)
+10. [Granting Admin Access](#granting-admin-access)
+11. [Troubleshooting](#troubleshooting)
+
+---
+
+## Tech Stack Overview
+
+Your LNL Automations store is built with modern, production-ready technologies that ensure security, scalability, and excellent performance.
+
+### Frontend Technologies
+
+**Core Framework**
+- **React 19** - Latest version of React for building the user interface
+- **TypeScript 5.9** - Type-safe JavaScript for fewer bugs and better developer experience
+- **Vite 7** - Lightning-fast build tool and development server
+
+**UI & Styling**
+- **Tailwind CSS 4** - Utility-first CSS framework for responsive design
+- **shadcn/ui** - High-quality, accessible React components built on Radix UI
+- **Radix UI** - Unstyled, accessible component primitives
+- **Lucide React** - Beautiful, consistent icon library
+- **Framer Motion** - Smooth animations and transitions
+
+**State Management & Data Fetching**
+- **tRPC 11** - End-to-end typesafe APIs without code generation
+- **TanStack Query (React Query)** - Powerful data synchronization and caching
+- **Wouter** - Lightweight routing library (3KB alternative to React Router)
+- **React Context API** - Shopping cart state management
+
+**Forms & Validation**
+- **React Hook Form** - Performant form handling with minimal re-renders
+- **Zod** - TypeScript-first schema validation
+- **@hookform/resolvers** - Integration between React Hook Form and Zod
+
+**UI Components & Features**
+- **Sonner** - Beautiful toast notifications
+- **date-fns** - Modern date utility library
+- **Streamdown** - Markdown rendering with streaming support
+- **Embla Carousel** - Lightweight carousel library
+
+### Backend Technologies
+
+**Server Framework**
+- **Node.js 22** - JavaScript runtime
+- **Express 4** - Minimal web framework for Node.js
+- **tRPC Server 11** - Type-safe API layer
+- **Superjson** - Safely serialize JavaScript expressions (handles Date, Map, Set, etc.)
+
+**Database**
+- **MySQL/TiDB** - Relational database (cloud-hosted)
+- **Drizzle ORM 0.44** - TypeScript ORM with excellent type inference
+- **Drizzle Kit** - Database migration tool
+
+**Authentication**
+- **Manus OAuth** - Secure OAuth 2.0 authentication
+- **Jose 6.1** - JavaScript module for JWT/JWS/JWE/JWK/JWKS
+- **Cookie-based sessions** - Secure HTTP-only cookies
+
+**Payment Processing**
+- **Stripe API** - Industry-leading payment processor
+- **Stripe Checkout** - Hosted payment pages
+- **Stripe Webhooks** - Real-time payment event notifications
+
+**File Storage**
+- **AWS S3** - Cloud object storage for product images and digital files
+- **@aws-sdk/client-s3** - AWS SDK for JavaScript v3
+- **@aws-sdk/s3-request-presigner** - Generate presigned URLs for secure downloads
+
+**Email & Notifications**
+- **Manus Notification API** - Built-in notification system for owner alerts
+- **Email integration via Stripe** - Customer order confirmations
+
+### Development & Testing
+
+**Build Tools**
+- **esbuild** - Extremely fast JavaScript bundler
+- **tsx** - TypeScript execution and REPL for Node.js
+- **PostCSS** - CSS transformation tool
+- **Autoprefixer** - Automatically add vendor prefixes to CSS
+
+**Testing**
+- **Vitest** - Fast unit test framework (Vite-native)
+- **20 test suites** covering products, orders, reviews, email, auth
+
+**Code Quality**
+- **TypeScript strict mode** - Maximum type safety
+- **Prettier** - Code formatter
+- **ESLint** (configured via template) - Code linting
+
+**Package Management**
+- **pnpm 10** - Fast, disk space efficient package manager
+
+### Infrastructure & Deployment
+
+**Hosting Options**
+- **Manus Built-in Hosting** - One-click deployment with custom domain support
+- **External Hosting** - Compatible with Hostinger, Railway, Render, Vercel, etc.
+
+**Environment Management**
+- **dotenv** - Environment variable management
+- **Automatic secret injection** - Stripe keys, database URL, OAuth credentials
+
+**Monitoring & Debugging**
+- **Server logs** - Comprehensive logging in `.manus-logs/` directory
+- **Browser console logging** - Client-side error tracking
+- **Network request logs** - HTTP request/response monitoring
+
+### Database Schema
+
+**Tables**
+1. **users** - Customer accounts with OAuth integration
+   - Fields: id, openId, name, email, role (admin/user), loginMethod, timestamps
+
+2. **products** - Product catalog
+   - Fields: id, name, description, price, type (digital/physical), category, imageUrl, digitalFileKey, digitalFileName, isActive, timestamps
+
+3. **orders** - Purchase records
+   - Fields: id, customerEmail, customerName, totalAmount, status, paymentIntentId, shippingAddress, timestamps
+
+4. **orderItems** - Individual items in each order
+   - Fields: id, orderId, productName, quantity, priceAtPurchase, digitalFileKey, digitalFileName, timestamps
+
+5. **digitalDownloads** - Secure download tokens
+   - Fields: id, orderItemId, token, expiresAt, downloadCount, maxDownloads, timestamps
+
+6. **reviews** - Customer product reviews
+   - Fields: id, productId, userId, rating (1-5), comment, timestamps
+
+### Security Features
+
+**Authentication & Authorization**
+- OAuth 2.0 with multiple providers (Google, GitHub, Email)
+- HTTP-only secure cookies
+- Role-based access control (admin/user)
+- JWT token validation
+
+**Payment Security**
+- PCI-compliant Stripe integration
+- Webhook signature verification
+- No credit card data stored locally
+- Secure checkout sessions
+
+**File Security**
+- Presigned S3 URLs with expiration
+- Download token system (30-day expiry, 5 download limit)
+- Secure file key storage
+- Public CDN for product images only
+
+**Data Protection**
+- SQL injection prevention via Drizzle ORM
+- XSS protection via React
+- CSRF protection via SameSite cookies
+- Input validation with Zod schemas
+
+### Performance Optimizations
+
+**Frontend**
+- Code splitting and lazy loading
+- Image optimization recommendations
+- React Query caching
+- Debounced search (300ms)
+- Optimistic UI updates
+
+**Backend**
+- Database connection pooling
+- Efficient SQL queries via Drizzle
+- tRPC batching and caching
+- Superjson for efficient data serialization
+
+**Assets**
+- CDN delivery for images and files
+- Aggressive browser caching for static assets
+- Vite build optimization
+
+### Browser Compatibility
+
+**Supported Browsers**
+- Chrome/Edge (latest 2 versions)
+- Firefox (latest 2 versions)
+- Safari (latest 2 versions)
+
+**Not Supported**
+- Safari Private Browsing (OAuth limitation)
+- Firefox Strict ETP mode (OAuth limitation)
+- Brave Aggressive Shields (OAuth limitation)
+- Internet Explorer (deprecated)
+
+### API Integrations
+
+**Stripe API**
+- Checkout Sessions API
+- Payment Intents API
+- Webhooks API
+- Customer API
+
+**AWS S3 API**
+- PutObject (file uploads)
+- GetObject (presigned URLs)
+- Object storage and retrieval
+
+**Manus Platform APIs**
+- OAuth API
+- Notification API
+- Analytics API (built-in)
 
 ---
 
