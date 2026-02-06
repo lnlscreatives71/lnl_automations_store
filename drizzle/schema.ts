@@ -34,6 +34,17 @@ export const products = mysqlTable("products", {
   description: text("description").notNull(),
   price: int("price").notNull(), // Price in cents
   type: mysqlEnum("type", ["digital", "physical"]).notNull(),
+  category: mysqlEnum("category", [
+    "agent_workflows",
+    "automated_workflows",
+    "voice_chat_bots",
+    "websites",
+    "personal_assistant_agents",
+    "social_media_post_packs",
+    "social_media_content_topics",
+    "talking_avatars",
+    "branded_assets"
+  ]).notNull(),
   imageUrl: text("imageUrl"), // S3 URL for product image
   digitalFileKey: text("digitalFileKey"), // S3 key for digital product file
   digitalFileName: varchar("digitalFileName", { length: 255 }), // Original filename for downloads

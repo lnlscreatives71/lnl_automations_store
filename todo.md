@@ -106,3 +106,13 @@
 - [x] Include order details and receipt in customer email
 - [x] Include download links for digital products in customer email
 - [x] Add email templates for professional formatting
+
+
+## Product Categorization System
+- [x] Add category field to products table in database
+- [x] Create categories enum with all specified categories
+- [x] Update admin panel to include category selection
+- [x] Add category filter to Products page
+- [x] Display category badges on product cards
+- [x] Add category navigation/filter menu
+- [x] Update product creation/editing to include category

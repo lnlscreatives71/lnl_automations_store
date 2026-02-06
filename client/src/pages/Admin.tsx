@@ -11,6 +11,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { toast } from "sonner";
 import { Pencil, Trash2, Plus, Package } from "lucide-react";
 import { useAuth } from "@/_core/hooks/useAuth";
+import { getAllCategories, type ProductCategory } from "@shared/categories";
 
 export default function Admin() {
   const { user, loading: authLoading } = useAuth();
@@ -23,6 +24,7 @@ export default function Admin() {
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
   const [type, setType] = useState<"digital" | "physical">("digital");
+  const [category, setCategory] = useState<ProductCategory>("automated_workflows");
   const [imageUrl, setImageUrl] = useState("");
   const [digitalFileKey, setDigitalFileKey] = useState("");
   const [digitalFileName, setDigitalFileName] = useState("");
@@ -68,6 +70,7 @@ export default function Admin() {
     setDescription("");
     setPrice("");
     setType("digital");
+    setCategory("automated_workflows");
     setImageUrl("");
     setDigitalFileKey("");
     setDigitalFileName("");
@@ -80,6 +83,7 @@ export default function Admin() {
     setDescription(product.description || "");
     setPrice((product.price / 100).toString());
     setType(product.type);
+    setCategory(product.category || "automated_workflows");
     setImageUrl(product.imageUrl || "");
     setDigitalFileKey(product.digitalFileKey || "");
     setDigitalFileName(product.digitalFileName || "");
@@ -106,6 +110,7 @@ export default function Admin() {
       description: description.trim(),
       price: priceInCents,
       type,
+      category,
     };
     
     if (imageUrl.trim()) productData.imageUrl = imageUrl.trim();
@@ -321,6 +326,23 @@ export default function Admin() {
                   </SelectContent>
                 </Select>
               </div>
+            </div>
+
+            <div>
+              <Label htmlFor="category">Category *</Label>
+              <Select value={category} onValueChange={(value: ProductCategory) => setCategory(value)}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {getAllCategories().map((cat) => (
+                    <SelectItem key={cat.value} value={cat.value}>
+                      {cat.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <p className="text-sm text-muted-foreground mt-1">Select the category that best describes this product</p>
             </div>
 
             <div>

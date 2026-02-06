@@ -2,11 +2,14 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { trpc } from "@/lib/trpc";
-import { Download, ShoppingCart, Search, Star } from "lucide-react";
+import { Download, ShoppingCart, Search, Star, Filter } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import { useCart } from "@/contexts/CartContext";
 import { toast } from "sonner";
 import { useState, useEffect } from "react";
+import { getAllCategories, getCategoryDisplayName, type ProductCategory } from "@shared/categories";
+import { Badge } from "@/components/ui/badge";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 // Product Rating Component
 function ProductRating({ productId }: { productId: number }) {
@@ -42,8 +45,14 @@ export default function Products() {
   
   const [searchQuery, setSearchQuery] = useState(initialSearch);
   const [debouncedSearch, setDebouncedSearch] = useState(initialSearch);
+  const [selectedCategory, setSelectedCategory] = useState<ProductCategory | 'all'>('all');
   
-  const { data: products, isLoading } = trpc.products.search.useQuery({ query: debouncedSearch });
+  const { data: allProducts, isLoading } = trpc.products.search.useQuery({ query: debouncedSearch });
+  
+  // Filter products by category
+  const products = selectedCategory === 'all' 
+    ? allProducts 
+    : allProducts?.filter(p => p.category === selectedCategory);
   const { addItem } = useCart();
 
   // Debounce search input
@@ -103,12 +112,35 @@ export default function Products() {
 
       <div className="container py-12">
         <div className="mb-8">
-          <h1 className="text-4xl font-bold mb-2">
-            {debouncedSearch ? `Search Results for "${debouncedSearch}"` : 'All Products'}
-          </h1>
+          <div className="flex items-center justify-between mb-4">
+            <h1 className="text-4xl font-bold">
+              {debouncedSearch ? `Search Results for "${debouncedSearch}"` : 'All Products'}
+            </h1>
+            
+            {/* Category Filter */}
+            <div className="flex items-center gap-2">
+              <Filter className="h-4 w-4 text-muted-foreground" />
+              <Select value={selectedCategory} onValueChange={(value: ProductCategory | 'all') => setSelectedCategory(value)}>
+                <SelectTrigger className="w-[250px]">
+                  <SelectValue placeholder="All Categories" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Categories</SelectItem>
+                  {getAllCategories().map((cat) => (
+                    <SelectItem key={cat.value} value={cat.value}>
+                      {cat.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+          
           <p className="text-muted-foreground">
             {debouncedSearch 
               ? `Found ${products?.length || 0} product${products?.length === 1 ? '' : 's'}`
+              : selectedCategory !== 'all'
+              ? `Showing ${products?.length || 0} product${products?.length === 1 ? '' : 's'} in ${getCategoryDisplayName(selectedCategory)}`
               : 'Browse our complete collection of digital and physical products'
             }
           </p>
@@ -140,12 +172,15 @@ export default function Products() {
                   </div>
                 )}
                 <CardHeader className="flex-1">
-                  <div className="flex items-start justify-between">
-                    <CardTitle className="line-clamp-1">{product.name}</CardTitle>
+                  <div className="flex items-start justify-between mb-2">
+                    <Badge variant="secondary" className="text-xs">
+                      {getCategoryDisplayName(product.category)}
+                    </Badge>
                     {product.type === "digital" && (
                       <Download className="h-4 w-4 text-primary flex-shrink-0 ml-2" />
                     )}
                   </div>
+                  <CardTitle className="line-clamp-1">{product.name}</CardTitle>
                   <CardDescription className="line-clamp-2">{product.description}</CardDescription>
                   <ProductRating productId={product.id} />
                 </CardHeader>
