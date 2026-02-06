@@ -6,7 +6,8 @@ import {
   orders, InsertOrder, Order,
   orderItems, InsertOrderItem, OrderItem,
   digitalDownloads, InsertDigitalDownload, DigitalDownload,
-  reviews, InsertReview, Review
+  reviews, InsertReview, Review,
+  newsletterSubscribers, InsertNewsletterSubscriber, NewsletterSubscriber
 } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
@@ -379,4 +380,26 @@ export async function getProductAverageRating(productId: number): Promise<{ aver
   const average = sum / productReviews.length;
   
   return { average: Math.round(average * 10) / 10, count: productReviews.length };
+}
+
+// Newsletter subscribers
+export async function subscribeToNewsletter(email: string): Promise<NewsletterSubscriber> {
+  const db = await getDb();
+  if (!db) throw new Error('Database not available');
+  
+  const result = await db.insert(newsletterSubscribers).values({
+    email,
+    isActive: 1,
+  });
+  
+  const id = Number(result[0].insertId);
+  const subscriber = await db.select().from(newsletterSubscribers).where(eq(newsletterSubscribers.id, id)).limit(1);
+  return subscriber[0];
+}
+
+export async function getAllNewsletterSubscribers(): Promise<NewsletterSubscriber[]> {
+  const db = await getDb();
+  if (!db) return [];
+  
+  return await db.select().from(newsletterSubscribers).where(eq(newsletterSubscribers.isActive, 1)).orderBy(desc(newsletterSubscribers.subscribedAt));
 }

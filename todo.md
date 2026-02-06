@@ -139,3 +139,11 @@
 - [x] Add product showcase section with video/GIF support
 - [x] Create blog/resources section with routing and sample articles
 - [x] Link blog section from homepage and navigation
+
+
+## Newsletter Feature
+- [x] Create newsletter_subscribers table in database
+- [x] Add backend API for newsletter subscription
+- [x] Add newsletter signup form to footer
+- [x] Implement email validation and duplicate prevention
+- [x] Add success/error toast notifications

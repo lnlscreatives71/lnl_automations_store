@@ -1,0 +1,9 @@
+{
+  "query": "CREATE TABLE `newsletterSubscribers` (\n\t`id` int AUTO_INCREMENT NOT NULL,\n\t`email` varchar(320) NOT NULL,\n\t`isActive` int NOT NULL DEFAULT 1,\n\t`subscribedAt` timestamp NOT NULL DEFAULT (now()),\n\t`unsubscribedAt` timestamp,\n\tCONSTRAINT `newsletterSubscribers_id` PRIMARY KEY(`id`),\n\tCONSTRAINT `newsletterSubscribers_email_unique` UNIQUE(`email`)\n);",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 4Nd4FtWyHogrtHb.root --database XGXJJsxP2u4YLiddnWXVLf --execute CREATE TABLE `newsletterSubscribers` (\n\t`id` int AUTO_INCREMENT NOT NULL,\n\t`email` varchar(320) NOT NULL,\n\t`isActive` int NOT NULL DEFAULT 1,\n\t`subscribedAt` timestamp NOT NULL DEFAULT (now()),\n\t`unsubscribedAt` timestamp,\n\tCONSTRAINT `newsletterSubscribers_id` PRIMARY KEY(`id`),\n\tCONSTRAINT `newsletterSubscribers_email_unique` UNIQUE(`email`)\n);",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 441
+}

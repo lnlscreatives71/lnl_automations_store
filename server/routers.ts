@@ -417,6 +417,34 @@ export const appRouter = router({
         return review;
       }),
   }),
+
+  // Newsletter
+  newsletter: router({  
+    subscribe: publicProcedure
+      .input(z.object({ email: z.string().email() }))
+      .mutation(async ({ input }) => {
+        try {
+          await db.subscribeToNewsletter(input.email);
+          return { success: true, message: 'Successfully subscribed to newsletter!' };
+        } catch (error: any) {
+          // Check for duplicate entry error (MySQL error code or message)
+          if (error.code === 'ER_DUP_ENTRY' || error.message?.includes('Duplicate entry') || error.message?.includes('unique constraint')) {
+            throw new TRPCError({
+              code: 'BAD_REQUEST',
+              message: 'This email is already subscribed to our newsletter',
+            });
+          }
+          throw new TRPCError({
+            code: 'INTERNAL_SERVER_ERROR',
+            message: 'Failed to subscribe. Please try again later.',
+          });
+        }
+      }),
+
+    list: adminProcedure.query(async () => {
+      return await db.getAllNewsletterSubscribers();
+    }),
+  }),
 });
 
 export type AppRouter = typeof appRouter;

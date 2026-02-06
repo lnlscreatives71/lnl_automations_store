@@ -7,12 +7,22 @@ import { trpc } from "@/lib/trpc";
 import { ShoppingCart, User, Package, Download, Search } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import { useState } from "react";
+import { toast } from "sonner";
 
 export default function Home() {
   const { user, isAuthenticated } = useAuth();
   const { data: products, isLoading } = trpc.products.list.useQuery();
   const [searchQuery, setSearchQuery] = useState('');
   const [, setLocation] = useLocation();
+  
+  const newsletterMutation = trpc.newsletter.subscribe.useMutation({
+    onSuccess: (data) => {
+      toast.success(data.message);
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -393,6 +403,37 @@ export default function Home() {
               </ul>
             </div>
           </div>
+          
+          {/* Newsletter Signup */}
+          <div className="border-t mt-8 pt-8">
+            <div className="max-w-md mx-auto text-center">
+              <h4 className="font-semibold mb-2">Stay Updated</h4>
+              <p className="text-sm text-muted-foreground mb-4">
+                Subscribe to our newsletter for product updates, automation tips, and exclusive offers.
+              </p>
+              <form onSubmit={(e) => {
+                e.preventDefault();
+                const formData = new FormData(e.currentTarget);
+                const email = formData.get('email') as string;
+                if (email) {
+                  newsletterMutation.mutate({ email });
+                  e.currentTarget.reset();
+                }
+              }} className="flex gap-2">
+                <input
+                  type="email"
+                  name="email"
+                  placeholder="Enter your email"
+                  required
+                  className="flex-1 px-4 py-2 border border-input rounded-md bg-background text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+                />
+                <Button type="submit" disabled={newsletterMutation.isPending}>
+                  {newsletterMutation.isPending ? 'Subscribing...' : 'Subscribe'}
+                </Button>
+              </form>
+            </div>
+          </div>
+          
           <div className="border-t mt-8 pt-8 text-center text-sm text-muted-foreground">
             <p>&copy; {new Date().getFullYear()} LNL Automations Studio. All rights reserved.</p>
           </div>
