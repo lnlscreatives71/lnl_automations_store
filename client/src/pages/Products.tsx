@@ -2,11 +2,38 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { trpc } from "@/lib/trpc";
-import { Download, ShoppingCart, Search } from "lucide-react";
+import { Download, ShoppingCart, Search, Star } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import { useCart } from "@/contexts/CartContext";
 import { toast } from "sonner";
 import { useState, useEffect } from "react";
+
+// Product Rating Component
+function ProductRating({ productId }: { productId: number }) {
+  const { data: rating } = trpc.reviews.getAverageRating.useQuery({ productId });
+  
+  if (!rating || rating.count === 0) return null;
+  
+  return (
+    <div className="flex items-center gap-2 mt-2">
+      <div className="flex">
+        {[1, 2, 3, 4, 5].map((star) => (
+          <Star
+            key={star}
+            className={`h-4 w-4 ${
+              star <= Math.round(rating.average)
+                ? "fill-yellow-400 text-yellow-400"
+                : "text-gray-300"
+            }`}
+          />
+        ))}
+      </div>
+      <span className="text-sm text-muted-foreground">
+        {rating.average.toFixed(1)} ({rating.count})
+      </span>
+    </div>
+  );
+}
 
 export default function Products() {
   const [location] = useLocation();
@@ -120,6 +147,7 @@ export default function Products() {
                     )}
                   </div>
                   <CardDescription className="line-clamp-2">{product.description}</CardDescription>
+                  <ProductRating productId={product.id} />
                 </CardHeader>
                 <CardFooter className="flex flex-col gap-2">
                   <div className="flex items-center justify-between w-full">
