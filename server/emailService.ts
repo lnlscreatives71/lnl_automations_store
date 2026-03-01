@@ -103,7 +103,7 @@ Your digital products are ready for download! Click the download links above or 
 Best regards,
 LNL Automations Studio Team
 
-For support, visit: lnlautomations.cloud
+For support, visit: store.lnlautomations.cloud
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   `.trim();

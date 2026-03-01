@@ -18,6 +18,8 @@ const About = React.lazy(() => import("./pages/About"));
 const Contact = React.lazy(() => import("./pages/Contact"));
 const FAQ = React.lazy(() => import("./pages/FAQ"));
 const RefundPolicy = React.lazy(() => import("./pages/RefundPolicy"));
+const PrivacyPolicy = React.lazy(() => import("./pages/PrivacyPolicy"));
+const TermsOfService = React.lazy(() => import("./pages/TermsOfService"));
 const Blog = React.lazy(() => import("./pages/Blog"));
 
 function Router() {
@@ -36,6 +38,8 @@ function Router() {
         <Route path={"/contact"} component={Contact} />
         <Route path={"/faq"} component={FAQ} />
         <Route path={"/refund-policy"} component={RefundPolicy} />
+        <Route path={"/privacy-policy"} component={PrivacyPolicy} />
+        <Route path={"/terms-of-service"} component={TermsOfService} />
         <Route path={"/blog"} component={Blog} />
         <Route path={"/404"} component={NotFound} />
         {/* Final fallback route */}
