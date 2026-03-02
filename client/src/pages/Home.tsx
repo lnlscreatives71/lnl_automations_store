@@ -116,7 +116,7 @@ export default function Home() {
         />
         <div className="relative container py-24 md:py-32">
           <div className="max-w-3xl mx-auto text-center text-white">
-            <img src="/logo.png" alt="LNL Automations Studio" className="h-32 w-auto mx-auto mb-8" />
+            <img src="/logo.png" alt="LNL Automations Studio" className="h-48 w-auto mx-auto mb-8" />
             <h1 className="text-4xl md:text-6xl font-bold mb-6">
               Premium Digital Products & Automation Solutions
             </h1>
